@@ -45,11 +45,14 @@ void Mesh::setMeshData(const TexVertex* pakVertices, D3DPRIMITIVETYPE ePrimitive
 	meshPrimitive = ePrimitive;
 }
 
-void Mesh::draw(vector<string>& vec){
+void Mesh::draw(vector<string>& vec, int& vNum, int& pNum){
+
+	int otherInt = 0;
 
 	string push;
-	push = name + "\n" + "  ";
-	vec.push_back(push);
+	push = name + " " + " - Vertices: " + to_string(vertsSize / 3);
+
+	vNum += vertsSize / 3;
 
 	meshIB->bind();
 	meshVB->bind();
@@ -57,18 +60,25 @@ void Mesh::draw(vector<string>& vec){
 	meshRenderer->setCurrentTexture(text);
 
 	meshRenderer->setMatrix(m_pkWorldMatrix); 
-	meshRenderer->drawCurrentBuffers(meshPrimitive);
+	meshRenderer->drawCurrentBuffers(meshPrimitive, pNum, otherInt);
+
+	push += " - Polygons: " + to_string(otherInt) + "\n ";
+	vec.push_back(push);
 }
 
-void Mesh::draw(Renderer& rkRenderer, CollisionResult eParentResult, const Frustum& rkFrustum, vector<string>& vec){
+void Mesh::draw(Renderer& rkRenderer, CollisionResult eParentResult, const Frustum& rkFrustum, vector<string>& vec, int& vNum, int& pNum){
+	
+	int otherInt = 0;
+	
 	if (eParentResult != AllOutside){
 		string push;
 		if(eParentResult == PartiallyInside) {
-			push = name + " - Partially" + "\n" + "  ";
+			push = name + " - Partially - Vertices: " + to_string(vertsSize / 2);
 		}else{
-			push = name + "\n" + "  ";
+			push = name + " - Vertices: " + to_string(vertsSize / 3);
 		}
-		vec.push_back(push);
+
+		vNum += vertsSize / 3;
 
 		meshIB->bind();
 		meshVB->bind();
@@ -76,7 +86,10 @@ void Mesh::draw(Renderer& rkRenderer, CollisionResult eParentResult, const Frust
 		meshRenderer->setCurrentTexture(text);
 
 		meshRenderer->setMatrix(m_pkWorldMatrix);
-		meshRenderer->drawCurrentBuffers(meshPrimitive);
+		meshRenderer->drawCurrentBuffers(meshPrimitive, pNum, otherInt);
+
+		push += " - Polygons: " + to_string(otherInt) + "\n ";
+		vec.push_back(push);
 	}
 }
 
@@ -87,7 +100,7 @@ void Mesh::drawColored(){
 	meshIB->bind();
 	meshVBnotex->bind();
 
-	meshRenderer->drawCurrentBuffers(meshPrimitive);
+	//meshRenderer->drawCurrentBuffers(meshPrimitive);
 }
 
 void Mesh::setTextureId(int iTextureId, Texture blah){

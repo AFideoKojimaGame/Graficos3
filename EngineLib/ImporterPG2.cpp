@@ -38,35 +38,47 @@ bool ImporterPG2::importScene(const std::string& rkFilename, Node& orkSceneRoot)
 	if (iRoot->mNumChildren <= 0 && iRoot->mNumMeshes <= 0)
 		return false;
 
-	aiVector3t<float> positionRoot;
-	aiQuaterniont<float> rotationRoot;
-	aiVector3t<float> scaleRoot;
-	iRoot->mTransformation.Decompose(scaleRoot, rotationRoot, positionRoot);
-	orkSceneRoot.setPos(positionRoot.x, positionRoot.y, positionRoot.z);
-	orkSceneRoot.setRotation(0, 0, 0);
-	orkSceneRoot.setScale(scaleRoot.x, scaleRoot.y, scaleRoot.z);
-	orkSceneRoot.setName(iRoot->mName.C_Str());
-
-	for (unsigned int i = 0; i < iRoot->mNumChildren; i++){
-		importNode(iRoot->mChildren[i], orkSceneRoot, scene);
-	}
+	importNode(iRoot, orkSceneRoot, scene);
 
 	return true;
 }
 
 void ImporterPG2::importNode(aiNode* child, Node& parent, const aiScene* scene){
 	
-	aiVector3t<float> position;
+	/*aiVector3t<float> position;
 	aiQuaterniont<float> rotation;
 	aiVector3t<float> scale;
-	child->mTransformation.Decompose(scale, rotation, position);
+	child->mTransformation.Decompose(scale, rotation, position);*/
+
+	float expMat[4][4];
+	expMat[0][0] = child->mTransformation.a1;
+	expMat[0][1] = child->mTransformation.a2;
+	expMat[0][2] = child->mTransformation.a3;
+	expMat[0][3] = child->mTransformation.a4;
+
+	expMat[1][0] = child->mTransformation.b1;
+	expMat[1][1] = child->mTransformation.b2;
+	expMat[1][2] = child->mTransformation.b3;
+	expMat[1][3] = child->mTransformation.b4;
+
+	expMat[2][0] = child->mTransformation.c1;
+	expMat[2][1] = child->mTransformation.c2;
+	expMat[2][2] = child->mTransformation.c3;
+	expMat[2][3] = child->mTransformation.c4;
+
+	expMat[3][0] = child->mTransformation.d1;
+	expMat[3][1] = child->mTransformation.d2;
+	expMat[3][2] = child->mTransformation.d3;
+	expMat[3][3] = child->mTransformation.d4;
+
+	parent.importMatrix(expMat);
 
 	if (child->mNumChildren != 0){
 		Node* newNode = new Node();
 
-		newNode->setPos(position.x, position.y, position.z);
+		/*newNode->setPos(position.x, position.y, position.z);
 		newNode->setRotation(rotation.x, rotation.y, rotation.z);
-		newNode->setScale(scale.x, scale.y, scale.z);
+		newNode->setScale(scale.x, scale.y, scale.z);*/
 
 		newNode->setName(child->mName.C_Str());
 
@@ -85,16 +97,27 @@ void ImporterPG2::importNode(aiNode* child, Node& parent, const aiScene* scene){
 
 		TexVertex* meshVertex = new TexVertex[rootMesh->mNumVertices];
 
-		for (unsigned int i = 0; i < rootMesh->mNumVertices; i++){
-			meshVertex[i] = { rootMesh->mVertices[i].x,
-				rootMesh->mVertices[i].y,
-				rootMesh->mVertices[i].z,
-				rootMesh->mTextureCoords[0][i].x,
-				rootMesh->mTextureCoords[0][i].y };
+		if (rootMesh->HasTextureCoords(0)) {
+			for (unsigned int i = 0; i < rootMesh->mNumVertices; i++) {
+				meshVertex[i] = { rootMesh->mVertices[i].x,
+					rootMesh->mVertices[i].y,
+					rootMesh->mVertices[i].z,
+					rootMesh->mTextureCoords[0][i].x,
+					rootMesh->mTextureCoords[0][i].y };
 
-			newMesh->createBV(rootMesh->mVertices[i].x, rootMesh->mVertices[i].y, rootMesh->mVertices[i].z);
+				newMesh->createBV(rootMesh->mVertices[i].x, rootMesh->mVertices[i].y, rootMesh->mVertices[i].z);
+			}
+		}else {
+			for (unsigned int i = 0; i < rootMesh->mNumVertices; i++) {
+				meshVertex[i] = { rootMesh->mVertices[i].x,
+					rootMesh->mVertices[i].y,
+					rootMesh->mVertices[i].z
+				};
+
+				newMesh->createBV(rootMesh->mVertices[i].x, rootMesh->mVertices[i].y, rootMesh->mVertices[i].z);
+			}
 		}
-
+		
 		unsigned short* indices = new unsigned short[rootMesh->mNumFaces * 3];
 
 		for (unsigned int j = 0; j < rootMesh->mNumFaces; j++){
@@ -121,9 +144,11 @@ void ImporterPG2::importNode(aiNode* child, Node& parent, const aiScene* scene){
 				newMesh->setTextureId(rootMesh->mMaterialIndex, gil);
 		}
 
-		newMesh->setPos(position.x, position.y, position.z);
+		/*newMesh->setPos(position.x, position.y, position.z);
 		newMesh->setRotation(rotation.x, rotation.y, rotation.z);
-		newMesh->setScale(scale.x, scale.y, scale.z);
+		newMesh->setScale(scale.x, scale.y, scale.z);*/
+
+		newMesh->importMatrix(expMat);
 
 		newMesh->setName(child->mName.C_Str());
 

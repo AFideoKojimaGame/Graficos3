@@ -23,9 +23,9 @@ public:
 	DllExport void setMeshData(const TexVertex* pakVertices, D3DPRIMITIVETYPE ePrimitive,						//Revisar proviene 
 							   size_t uiVertexCount, const unsigned short* pusIndices, size_t uiIndexCount);	//de Renderer
 
-	DllExport void draw(vector<string>& vec);
+	DllExport void draw(vector<string>& vec, int& vNum, int& pNum);
 	DllExport void drawColored();
-	DllExport void draw(Renderer& rkRenderer, CollisionResult eParentResult, const Frustum& rkFrustum, vector<string>& vec);
+	DllExport void draw(Renderer& rkRenderer, CollisionResult eParentResult, const Frustum& rkFrustum, vector<string>& vec, int& vNum, int& pNum);
 
 	DllExport void createBV(float x, float y, float z);
 	DllExport void updateBV();

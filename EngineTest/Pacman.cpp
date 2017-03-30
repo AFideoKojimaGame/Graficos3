@@ -24,8 +24,12 @@ void Pacman::frame(Renderer& pkRenderer, DirectInput& rkInput, Timer& rkTimer){
 	if (!nameVector->empty())
 		nameVector->clear();
 
+	root->setPos(0, 0, 0);
 	root->updateBV();
-	root->draw(pkRenderer, gameCamera->getFrustum().aabbInFrustum(root->getAABB()),gameCamera->getFrustum(), *nameVector);
+	//D3DXVECTOR3 cookie = root->getAABB().min;
+	//D3DXVECTOR3 cookie2 = root->getAABB().max;
+	//root->draw(*nameVector, *vertsNumber, *polyNumber);
+	root->draw(pkRenderer, gameCamera->getFrustum().aabbInFrustum(root->getAABB()),gameCamera->getFrustum(), *nameVector, *vertsNumber, *polyNumber);
 
 	if (rkInput.keyDown(Input::KEY_F)){
 		gameCamera->strafe(-fSpeed);;

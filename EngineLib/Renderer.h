@@ -61,7 +61,7 @@ public:
 	DllExport IndexBuffer* createIndexBuffer();
 	DllExport void setCurrentIndexBuffer(IndexBuffer* pkIndexBuffer);
 	DllExport void setCurrentVertexBuffer(VertexBuffer* pkVertexBuffer);
-	DllExport void drawCurrentBuffers(D3DPRIMITIVETYPE ePrimitive);
+	DllExport void drawCurrentBuffers(D3DPRIMITIVETYPE ePrimitive, int& pNum, int& otherInt);
 	DllExport void drawText(string text);
 
 private:

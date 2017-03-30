@@ -18,7 +18,13 @@ class Pacman : public Game{
 		void deinit();
 
 	private:
-
+		//Sprite playerChar;
+		//Animation* idle;
+		//Animation* walking;
+		//Animation* jumping;
+		//std::vector<Entity2D*> obstacles;
+		//Quad ob1;
+		//Quad ob2;
 		bool isColliding = false;
 		float Xmove, Ymove;
 		bool movingV = false;
@@ -31,11 +37,17 @@ class Pacman : public Game{
 
 		float camSpeedDivider;
 
+		//Mesh meshy;
+		//Mesh meshy2;
+		//Mesh meshy3;
+
 		Node* root;
 
 		ImporterPG2* imp;
 		string showMe;
 		vector<string>* nameVector = new vector<string>();
+		int* vertsNumber = new int();
+		int* polyNumber = new int();
 };
 
 #endif

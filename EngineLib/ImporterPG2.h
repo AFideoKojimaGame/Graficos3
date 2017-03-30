@@ -19,6 +19,7 @@ class ImporterPG2{
 
 	private:
 		DllExport void importNode(aiNode* child, Node& parent, const aiScene* scene);
+		DllExport void importMesh(aiNode* child, Node& parent, const aiScene* scene);
 
 		vector <Texture> m_Textures;
 		Renderer& importRenderer;

@@ -184,7 +184,7 @@ void Renderer::setCurrentIndexBuffer(IndexBuffer* indexBuffer){
 	iB = indexBuffer;
 }
 
-void Renderer::drawCurrentBuffers(D3DPRIMITIVETYPE ePrimitive){
+void Renderer::drawCurrentBuffers(D3DPRIMITIVETYPE ePrimitive, int& pNum, int& otherInt){
 	int iPrimitiveCount = 0;
 
 	if (ePrimitive == D3DPT_POINTLIST)
@@ -212,6 +212,8 @@ void Renderer::drawCurrentBuffers(D3DPRIMITIVETYPE ePrimitive){
 		iPrimitiveCount = iB->indexCount() - 2;
 	}
 
+	pNum += iPrimitiveCount;
+	otherInt = iPrimitiveCount;
 	HRESULT hr = d3ddev->DrawIndexedPrimitive(ePrimitive, 0, 0, vB3d->vertexCount(), 0, iPrimitiveCount);
 
 	assert(hr == D3D_OK);

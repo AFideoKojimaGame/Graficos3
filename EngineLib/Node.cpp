@@ -83,17 +83,23 @@ void Node::updateWorldTransformation(){
 		children[i]->updateWorldTransformation();
 }
 
-void Node::draw(vector<string>& vec){
+void Node::draw(vector<string>& vec, int& vNum, int& pNum){
 	string push;
 	push = name + "\n"  + "  ";
 	vec.push_back(push);
 	for (unsigned int i = 0; i < children.size(); i++)
-		children[i]->draw(vec);
+		children[i]->draw(vec, vNum, pNum);
 
 	vec.push_back("\n");
+
+	if (parent == NULL) {
+		string push2 = "\nTotal Vertices: ";
+		vec.push_back(push2 + to_string(vNum));
+		vNum = 0;
+	}
 }
 
-void Node::draw(Renderer& rkRenderer, CollisionResult eParentResult, const Frustum& rkFrustum, vector<string>& vec){
+void Node::draw(Renderer& rkRenderer, CollisionResult eParentResult, const Frustum& rkFrustum, vector<string>& vec, int& vNum, int& pNum){
 	if (eParentResult != AllOutside){
 		string push;
 		push = name + "\n" + "  ";
@@ -102,18 +108,27 @@ void Node::draw(Renderer& rkRenderer, CollisionResult eParentResult, const Frust
 		vec.push_back(push);
 		if (eParentResult == AllInside){
 			for (unsigned int i = 0; i < children.size(); i++){
-				children[i]->draw(vec);
+				children[i]->draw(vec, vNum, pNum);
 			}
 
 			vec.push_back("\n");
 
 		}else if (eParentResult == PartiallyInside){
 			for (unsigned int i = 0; i < children.size(); i++){
-				children[i]->draw(rkRenderer, rkFrustum.aabbInFrustum(children[i]->getAABB()), rkFrustum, vec);
+				children[i]->draw(rkRenderer, rkFrustum.aabbInFrustum(children[i]->getAABB()), rkFrustum, vec, vNum, pNum);
 			}
 
 			vec.push_back("\n");
 
+		}
+
+		if (parent == NULL) {
+			string push2 = "\nTotal Vertices: ";
+			vec.push_back(push2 + to_string(vNum));
+			string push3 = "\nTotal Polygons: ";
+			vec.push_back(push3 + to_string(pNum));
+			vNum = 0;
+			pNum = 0;
 		}
 	}
 	

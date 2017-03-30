@@ -124,6 +124,28 @@ float Entity3D::scaleZ() const{
 	return m_fScaleZ;
 }
 
+void Entity3D::importMatrix(float matrix[4][4]) {
+	m_pkTransformationMatrix->_11 = matrix[0][0];
+	m_pkTransformationMatrix->_12 = matrix[0][1];
+	m_pkTransformationMatrix->_13 = matrix[0][2];
+	m_pkTransformationMatrix->_14 = matrix[0][3];
+
+	m_pkTransformationMatrix->_21 = matrix[1][0];
+	m_pkTransformationMatrix->_22 = matrix[1][1];
+	m_pkTransformationMatrix->_23 = matrix[1][2];
+	m_pkTransformationMatrix->_24 = matrix[1][3];
+
+	m_pkTransformationMatrix->_31 = matrix[2][0];
+	m_pkTransformationMatrix->_32 = matrix[2][1];
+	m_pkTransformationMatrix->_33 = matrix[2][2];
+	m_pkTransformationMatrix->_34 = matrix[2][3];
+
+	m_pkTransformationMatrix->_41 = matrix[3][0];
+	m_pkTransformationMatrix->_42 = matrix[3][1];
+	m_pkTransformationMatrix->_43 = matrix[3][2];
+	m_pkTransformationMatrix->_44 = matrix[3][3];
+}
+
 void Entity3D::updateTransformation(){
 
 	D3DXMATRIX traslatrionMat;
