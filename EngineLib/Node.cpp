@@ -99,7 +99,7 @@ void Node::draw(vector<string>& vec, int& vNum, int& pNum){
 	}
 }
 
-void Node::draw(Renderer& rkRenderer, CollisionResult eParentResult, const Frustum& rkFrustum, vector<string>& vec, int& vNum, int& pNum){
+void Node::draw(Renderer& rkRenderer, CollisionResult eParentResult, const Frustum& rkFrustum, vector<string>& vec, int& vNum, int& pNum, float d, BSPPlane& bsp){
 	if (eParentResult != AllOutside){
 		string push;
 		push = name + "\n" + "  ";
@@ -115,7 +115,7 @@ void Node::draw(Renderer& rkRenderer, CollisionResult eParentResult, const Frust
 
 		}else if (eParentResult == PartiallyInside){
 			for (unsigned int i = 0; i < children.size(); i++){
-				children[i]->draw(rkRenderer, rkFrustum.aabbInFrustum(children[i]->getAABB()), rkFrustum, vec, vNum, pNum);
+				children[i]->draw(rkRenderer, rkFrustum.aabbInFrustum(children[i]->getAABB()), rkFrustum, vec, vNum, pNum, d, bsp);
 			}
 
 			vec.push_back("\n");

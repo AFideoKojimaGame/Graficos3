@@ -25,7 +25,7 @@ public:
 
 	DllExport void draw(vector<string>& vec, int& vNum, int& pNum);
 	DllExport void drawColored();
-	DllExport void draw(Renderer& rkRenderer, CollisionResult eParentResult, const Frustum& rkFrustum, vector<string>& vec, int& vNum, int& pNum);
+	DllExport void draw(Renderer& rkRenderer, CollisionResult eParentResult, const Frustum& rkFrustum, vector<string>& vec, int& vNum, int& pNum, float d, BSPPlane& bsp);
 
 	DllExport void createBV(float x, float y, float z);
 	DllExport void updateBV();
@@ -34,6 +34,8 @@ public:
 
 	DllExport D3DXVECTOR3 getMin();
 	DllExport D3DXVECTOR3 getMax();
+
+	DllExport void setCheck(float c);
 
 protected:
 	Renderer* meshRenderer;
@@ -49,6 +51,7 @@ protected:
 	Texture text;
 
 	int textureID;
+	float check;
 };
 
 #endif

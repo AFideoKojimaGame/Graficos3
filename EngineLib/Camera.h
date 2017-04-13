@@ -28,6 +28,8 @@ class Camera{
 
 		DllExport void UpdateCam();
 
+		DllExport D3DXVECTOR3 getPos();
+
 	private:
 		Renderer& r;
 

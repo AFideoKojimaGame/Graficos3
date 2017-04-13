@@ -52,7 +52,7 @@ class Entity3D{
 
 		DllExport virtual void draw(vector<string>& vec, int& vNum, int& pNum) = 0;
 		DllExport virtual void draw(Renderer& rkRenderer, CollisionResult eParentResult, 
-									const Frustum& rkFrustum, vector<string>& vec, int& vNum, int& pNum) = 0;
+									const Frustum& rkFrustum, vector<string>& vec, int& vNum, int& pNum, float d, BSPPlane& bsp) = 0;
 
 		DllExport const AABB& getAABB() const;
 		DllExport virtual void updateBV() = 0;

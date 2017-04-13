@@ -116,6 +116,10 @@ void Camera::yaw(float angle){
 	UpdateCam();
 }
 
+D3DXVECTOR3 Camera::getPos() {
+	return m_position;
+}
+
 void Camera::setPos(float fPosX, float fPosY, float fPosZ){
 	m_position.x = fPosX;
 	m_position.y = fPosY;

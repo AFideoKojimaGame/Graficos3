@@ -39,4 +39,14 @@ struct Frustum{
 		D3DXPLANE* frustum[6];
 };
 
+struct BSPPlane {
+	public:
+		DllExport BSPPlane();
+		DllExport ~BSPPlane();
+		DllExport void SetPlane(D3DXVECTOR3 v1, D3DXVECTOR3 v2, D3DXVECTOR3 v3);
+		DllExport float Check(D3DXVECTOR3 &p);
+	private:
+		D3DXPLANE* myPlane;
+};
+
 #endif

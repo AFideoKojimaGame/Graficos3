@@ -170,3 +170,21 @@ void Frustum::updateFrustum(D3DXMATRIX& view){
 	for (unsigned int i = 0; i < 6; i++)
 		D3DXPlaneNormalize(frustum[i], frustum[i]);
 }
+
+BSPPlane::BSPPlane() {
+	myPlane = new D3DXPLANE();
+}
+
+BSPPlane::~BSPPlane() {
+	delete myPlane;
+	myPlane = NULL;
+}
+
+void BSPPlane::SetPlane(D3DXVECTOR3 v1, D3DXVECTOR3 v2, D3DXVECTOR3 v3) {
+	D3DXPlaneFromPoints(myPlane, &v1, &v2, &v3);
+	D3DXPlaneNormalize(myPlane, myPlane);
+}
+
+float BSPPlane::Check(D3DXVECTOR3 &p) {
+	return D3DXPlaneDotCoord(myPlane, &p);
+}

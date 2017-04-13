@@ -66,30 +66,34 @@ void Mesh::draw(vector<string>& vec, int& vNum, int& pNum){
 	vec.push_back(push);
 }
 
-void Mesh::draw(Renderer& rkRenderer, CollisionResult eParentResult, const Frustum& rkFrustum, vector<string>& vec, int& vNum, int& pNum){
+void Mesh::draw(Renderer& rkRenderer, CollisionResult eParentResult, const Frustum& rkFrustum, vector<string>& vec, int& vNum, int& pNum, float d, BSPPlane& bsp){
 	
+	check = bsp.Check(D3DXVECTOR3(m_fPosX, m_fPosY, m_fPosZ));
+	name;
 	int otherInt = 0;
 	
 	if (eParentResult != AllOutside){
-		string push;
-		if(eParentResult == PartiallyInside) {
-			push = name + " - Partially - Vertices: " + to_string(vertsSize / 2);
-		}else{
-			push = name + " - Vertices: " + to_string(vertsSize / 3);
+		if((check > 0 && d > 0)){
+			string push;
+			if(eParentResult == PartiallyInside) {
+				push = name + " - Partially - Vertices: " + to_string(vertsSize / 2);
+			}else{
+				push = name + " - Vertices: " + to_string(vertsSize / 3);
+			}
+
+			vNum += vertsSize / 3;
+
+			meshIB->bind();
+			meshVB->bind();
+
+			meshRenderer->setCurrentTexture(text);
+
+			meshRenderer->setMatrix(m_pkWorldMatrix);
+			meshRenderer->drawCurrentBuffers(meshPrimitive, pNum, otherInt);
+
+			push += " - Polygons: " + to_string(otherInt) + "\n ";
+			vec.push_back(push);
 		}
-
-		vNum += vertsSize / 3;
-
-		meshIB->bind();
-		meshVB->bind();
-
-		meshRenderer->setCurrentTexture(text);
-
-		meshRenderer->setMatrix(m_pkWorldMatrix);
-		meshRenderer->drawCurrentBuffers(meshPrimitive, pNum, otherInt);
-
-		push += " - Polygons: " + to_string(otherInt) + "\n ";
-		vec.push_back(push);
 	}
 }
 
@@ -148,4 +152,8 @@ void Mesh::updateBV(){
 	v.y = maxY;
 	v.z = maxZ;
 	aabb.overwriteMax(v);
+}
+
+void Mesh::setCheck(float c) {
+	check = c;
 }

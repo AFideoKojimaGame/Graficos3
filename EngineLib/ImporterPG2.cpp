@@ -15,7 +15,7 @@ ImporterPG2::~ImporterPG2(){
 	m_Textures.clear();
 }
 
-bool ImporterPG2::importScene(const std::string& rkFilename, Node& orkSceneRoot){
+bool ImporterPG2::importScene(const std::string& rkFilename, Node& orkSceneRoot, BSPPlane& bsp){
 	
 	Importer importer;
 	aiString* path = new aiString;
@@ -38,19 +38,19 @@ bool ImporterPG2::importScene(const std::string& rkFilename, Node& orkSceneRoot)
 	if (iRoot->mNumChildren <= 0 && iRoot->mNumMeshes <= 0)
 		return false;
 
-	importNode(iRoot, orkSceneRoot, scene);
+	importNode(iRoot, orkSceneRoot, scene, bsp);
 
 	return true;
 }
 
-void ImporterPG2::importNode(aiNode* child, Node& parent, const aiScene* scene){
+void ImporterPG2::importNode(aiNode* child, Node& parent, const aiScene* scene, BSPPlane& bsp){
 	
-	/*aiVector3t<float> position;
+	aiVector3t<float> position;
 	aiQuaterniont<float> rotation;
 	aiVector3t<float> scale;
-	child->mTransformation.Decompose(scale, rotation, position);*/
+	child->mTransformation.Decompose(scale, rotation, position);
 
-	float expMat[4][4];
+	/*float expMat[4][4];
 	expMat[0][0] = child->mTransformation.a1;
 	expMat[0][1] = child->mTransformation.a2;
 	expMat[0][2] = child->mTransformation.a3;
@@ -71,19 +71,19 @@ void ImporterPG2::importNode(aiNode* child, Node& parent, const aiScene* scene){
 	expMat[3][2] = child->mTransformation.d3;
 	expMat[3][3] = child->mTransformation.d4;
 
-	parent.importMatrix(expMat);
+	parent.importMatrix(expMat);*/
 
 	if (child->mNumChildren != 0){
 		Node* newNode = new Node();
 
-		/*newNode->setPos(position.x, position.y, position.z);
-		newNode->setRotation(rotation.x, rotation.y, rotation.z);
-		newNode->setScale(scale.x, scale.y, scale.z);*/
+		newNode->setPos(position.x, position.y, position.z);
+		//newNode->setRotation(rotation.x, rotation.y, rotation.z);
+		newNode->setScale(scale.x, scale.y, scale.z);
 
 		newNode->setName(child->mName.C_Str());
 
 		for (unsigned int k = 0; k < child->mNumChildren; k++){
-			importNode(child->mChildren[k], *newNode, scene);
+			importNode(child->mChildren[k], *newNode, scene, bsp);
 		}
 
 		parent.addChild(newNode);
@@ -117,6 +117,19 @@ void ImporterPG2::importNode(aiNode* child, Node& parent, const aiScene* scene){
 				newMesh->createBV(rootMesh->mVertices[i].x, rootMesh->mVertices[i].y, rootMesh->mVertices[i].z);
 			}
 		}
+
+		string debugName = child->mName.C_Str();
+
+		if (debugName == "Plane001") {
+			D3DXVECTOR3 planeVerts[3];
+			for (unsigned int i = 0; i < 3; i++) {
+				planeVerts[i].x = rootMesh->mVertices[i].x;
+				planeVerts[i].y = rootMesh->mVertices[i].y;
+				planeVerts[i].z = rootMesh->mVertices[i].z;
+			}
+
+			bsp.SetPlane(planeVerts[0], planeVerts[1], planeVerts[2]);
+		}
 		
 		unsigned short* indices = new unsigned short[rootMesh->mNumFaces * 3];
 
@@ -144,11 +157,11 @@ void ImporterPG2::importNode(aiNode* child, Node& parent, const aiScene* scene){
 				newMesh->setTextureId(rootMesh->mMaterialIndex, gil);
 		}
 
-		/*newMesh->setPos(position.x, position.y, position.z);
-		newMesh->setRotation(rotation.x, rotation.y, rotation.z);
-		newMesh->setScale(scale.x, scale.y, scale.z);*/
+		newMesh->setPos(position.x, position.y, position.z);
+		//newMesh->setRotation(rotation.x, rotation.y, rotation.z);
+		newMesh->setScale(scale.x, scale.y, scale.z);
 
-		newMesh->importMatrix(expMat);
+		//newMesh->importMatrix(expMat);
 
 		newMesh->setName(child->mName.C_Str());
 
