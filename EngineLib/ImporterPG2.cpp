@@ -15,7 +15,7 @@ ImporterPG2::~ImporterPG2(){
 	m_Textures.clear();
 }
 
-bool ImporterPG2::importScene(const std::string& rkFilename, Node& orkSceneRoot, BSPPlane& bsp){
+bool ImporterPG2::importScene(const std::string& rkFilename, Node& orkSceneRoot, vector<BSPPlane*>& planevec, BSPTree& bsp){
 	
 	Importer importer;
 	aiString* path = new aiString;
@@ -38,12 +38,12 @@ bool ImporterPG2::importScene(const std::string& rkFilename, Node& orkSceneRoot,
 	if (iRoot->mNumChildren <= 0 && iRoot->mNumMeshes <= 0)
 		return false;
 
-	importNode(iRoot, orkSceneRoot, scene, bsp);
+	importNode(iRoot, orkSceneRoot, scene, planevec, bsp);
 
 	return true;
 }
 
-void ImporterPG2::importNode(aiNode* child, Node& parent, const aiScene* scene, BSPPlane& bsp){
+void ImporterPG2::importNode(aiNode* child, Node& parent, const aiScene* scene, vector<BSPPlane*>& planevec, BSPTree& bsp){
 	
 	aiVector3t<float> position;
 	aiQuaterniont<float> rotation;
@@ -83,7 +83,7 @@ void ImporterPG2::importNode(aiNode* child, Node& parent, const aiScene* scene, 
 		newNode->setName(child->mName.C_Str());
 
 		for (unsigned int k = 0; k < child->mNumChildren; k++){
-			importNode(child->mChildren[k], *newNode, scene, bsp);
+			importNode(child->mChildren[k], *newNode, scene, planevec, bsp);
 		}
 
 		parent.addChild(newNode);
@@ -119,8 +119,10 @@ void ImporterPG2::importNode(aiNode* child, Node& parent, const aiScene* scene, 
 		}
 
 		string debugName = child->mName.C_Str();
+		size_t findP = debugName.find("Plane");
 
-		if (debugName == "Plane001") {
+		if (findP != string::npos) {
+			BSPPlane* b = new BSPPlane();
 			D3DXVECTOR3 planeVerts[3];
 			for (unsigned int i = 0; i < 3; i++) {
 				planeVerts[i].x = rootMesh->mVertices[i].x;
@@ -128,7 +130,9 @@ void ImporterPG2::importNode(aiNode* child, Node& parent, const aiScene* scene, 
 				planeVerts[i].z = rootMesh->mVertices[i].z;
 			}
 
-			bsp.SetPlane(planeVerts[0], planeVerts[1], planeVerts[2]);
+			b->SetPlane(planeVerts[0], planeVerts[1], planeVerts[2]);
+			bsp.AddChild(planeVerts[0], planeVerts[1], planeVerts[2]);
+			planevec.push_back(b);
 		}
 		
 		unsigned short* indices = new unsigned short[rootMesh->mNumFaces * 3];

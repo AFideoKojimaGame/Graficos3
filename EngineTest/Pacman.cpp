@@ -5,10 +5,8 @@ bool Pacman::init(Renderer& rkRenderer){
 	imp = new ImporterPG2(rkRenderer);
 	root = new Node();
 
-	if (!imp->importScene("Assets/sample_scene.3ds", *root, bsp1))
+	if (!imp->importScene("Assets/sample_scene.3ds", *root, planes, bsp))
 		return false;
-
-	bsp1;
 
 	camSpeedDivider = 1000.0f;
 	gameCamera = new Camera(rkRenderer);
@@ -20,7 +18,7 @@ bool Pacman::init(Renderer& rkRenderer){
 
 void Pacman::frame(Renderer& pkRenderer, DirectInput& rkInput, Timer& rkTimer){
 	showMe = accumulate(begin(*nameVector), end(*nameVector), showMe);
-
+	//D3DXMATRIXROTATIONQUATERNION
 	gameCamera->updateFrustum();
 
 	if (!nameVector->empty())
@@ -31,7 +29,6 @@ void Pacman::frame(Renderer& pkRenderer, DirectInput& rkInput, Timer& rkTimer){
 	//D3DXVECTOR3 cookie = root->getAABB().min;
 	//D3DXVECTOR3 cookie2 = root->getAABB().max;
 	//root->draw(*nameVector, *vertsNumber, *polyNumber);
-	float dif = bsp1.Check(gameCamera->getPos());
 
 	root->draw(pkRenderer, 
 			   gameCamera->getFrustum().aabbInFrustum(root->getAABB()),
@@ -39,8 +36,8 @@ void Pacman::frame(Renderer& pkRenderer, DirectInput& rkInput, Timer& rkTimer){
 			   *nameVector,
 			   *vertsNumber,
 		       *polyNumber,
-			   dif,
-			   bsp1);
+		gameCamera->getPos(),
+			   bsp);
 
 	if (rkInput.keyDown(Input::KEY_F)){
 		gameCamera->strafe(-fSpeed);;
@@ -148,5 +145,20 @@ void Pacman::frame(Renderer& pkRenderer, DirectInput& rkInput, Timer& rkTimer){
 }
 
 void Pacman::deinit(){
+	if (!nameVector->empty())
+		nameVector->clear();
 
+	delete vertsNumber;
+	vertsNumber = NULL;
+
+	delete polyNumber;
+	polyNumber = NULL;
+
+	for (int i = 0; i < planes.size(); i++) {
+		delete planes[i];
+		planes[i] = NULL;
+	}
+
+	if (!planes.empty())
+		planes.clear();
 }

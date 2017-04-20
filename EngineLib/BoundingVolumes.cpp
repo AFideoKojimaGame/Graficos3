@@ -188,3 +188,37 @@ void BSPPlane::SetPlane(D3DXVECTOR3 v1, D3DXVECTOR3 v2, D3DXVECTOR3 v3) {
 float BSPPlane::Check(D3DXVECTOR3 &p) {
 	return D3DXPlaneDotCoord(myPlane, &p);
 }
+
+BSPTree::BSPTree() {}
+
+BSPTree::~BSPTree() {
+	for (unsigned int i = 0; i < planes.size(); i++) {
+		delete planes[i];
+		planes[i] = NULL;
+	}
+
+	if (!planes.empty())
+		planes.clear();
+}
+
+void BSPTree::AddChild(D3DXVECTOR3 v1, D3DXVECTOR3 v2, D3DXVECTOR3 v3) {
+	BSPPlane* bsp = new BSPPlane();
+	bsp->SetPlane(v1, v2, v3);
+	planes.push_back(bsp);
+}
+bool BSPTree::CheckTree(D3DXVECTOR3 camPos, D3DXVECTOR3 objPos) {
+	float camCheck, objCheck = 0;
+	bool canDraw = true;
+	for (int i = 0; i < planes.size(); i++) {
+		if(canDraw){
+			camCheck = planes[i]->Check(camPos);
+			objCheck = planes[i]->Check(objPos);
+			if ((objCheck > 0 && camCheck > 0) || (objCheck < 0 && camCheck < 0) || (camCheck == 0))
+				canDraw = true;
+			else
+				canDraw = false;
+		}
+	}
+
+	return canDraw;
+}

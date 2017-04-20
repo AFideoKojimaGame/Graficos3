@@ -6,6 +6,7 @@ Mesh::Mesh(Renderer& rkRenderer) :meshRenderer(&rkRenderer){
 	meshIB = meshRenderer->createIndexBuffer();
 	meshVB = meshRenderer->createVertexBuffer(sizeof(TexVertex), TextureFVF);
 	meshVBnotex = meshRenderer->createVertexBuffer(sizeof(ColorVertex), CustomFVF);
+	canDraw = true;
 }
 
 Mesh::~Mesh(){
@@ -66,14 +67,25 @@ void Mesh::draw(vector<string>& vec, int& vNum, int& pNum){
 	vec.push_back(push);
 }
 
-void Mesh::draw(Renderer& rkRenderer, CollisionResult eParentResult, const Frustum& rkFrustum, vector<string>& vec, int& vNum, int& pNum, float d, BSPPlane& bsp){
+void Mesh::draw(Renderer& rkRenderer, CollisionResult eParentResult, const Frustum& rkFrustum, vector<string>& vec, int& vNum, int& pNum, D3DXVECTOR3 camPos, BSPTree& bsp){
 	
-	check = bsp.Check(D3DXVECTOR3(m_fPosX, m_fPosY, m_fPosZ));
+	D3DXVECTOR3 myPos;
+	myPos.x = m_fPosX;
+	myPos.y = m_fPosY;
+	myPos.z = m_fPosZ;
+	canDraw = bsp.CheckTree(camPos, myPos);
+
+	//check = bsp.Check(D3DXVECTOR3(m_fPosX, m_fPosY, m_fPosZ));
 	name;
 	int otherInt = 0;
-	
+
+	//bool canDraw = false;
+
+	/*if ((check > 0 && d > 0) || (check < 0 && d < 0) || (d == 0))
+		canDraw = true;*/
+
 	if (eParentResult != AllOutside){
-		if((check > 0 && d > 0)){
+		if(canDraw){
 			string push;
 			if(eParentResult == PartiallyInside) {
 				push = name + " - Partially - Vertices: " + to_string(vertsSize / 2);
@@ -95,6 +107,8 @@ void Mesh::draw(Renderer& rkRenderer, CollisionResult eParentResult, const Frust
 			vec.push_back(push);
 		}
 	}
+
+	canDraw = true;
 }
 
 void Mesh::drawColored(){
@@ -152,8 +166,4 @@ void Mesh::updateBV(){
 	v.y = maxY;
 	v.z = maxZ;
 	aabb.overwriteMax(v);
-}
-
-void Mesh::setCheck(float c) {
-	check = c;
 }

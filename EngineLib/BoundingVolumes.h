@@ -49,4 +49,14 @@ struct BSPPlane {
 		D3DXPLANE* myPlane;
 };
 
+struct BSPTree {
+	public:
+		DllExport BSPTree();
+		DllExport ~BSPTree();
+		DllExport void AddChild(D3DXVECTOR3 v1, D3DXVECTOR3 v2, D3DXVECTOR3 v3);
+		DllExport bool CheckTree(D3DXVECTOR3 camPos, D3DXVECTOR3 objPos);
+	private:
+		vector<BSPPlane*> planes;
+};
+
 #endif
