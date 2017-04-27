@@ -24,6 +24,7 @@ class Entity3D{
 		DllExport void RotateZ(float fRotationZ){ setRotation(m_fRotationX, m_fRotationY, m_fRotationZ + fRotationZ); };
 
 		DllExport void setRotation(float fRotationX, float fRotationY, float fRotationZ);
+		DllExport void setRotationQuat(float fRotationX, float fRotationY, float fRotationZ, float fRotationW);
 
 		DllExport void ScaleX(float fScaleX){ setScale(m_fScaleX + fScaleX, m_fScaleY, m_fScaleZ); };
 		DllExport void ScaleY(float fScaleY){ setScale(m_fScaleX, m_fScaleY + fScaleY, m_fScaleZ); };
@@ -41,6 +42,7 @@ class Entity3D{
 		DllExport float rotationX() const;
 		DllExport float rotationY() const;
 		DllExport float rotationZ() const;
+		DllExport float rotationW() const;
 		DllExport float scaleX() const;
 		DllExport float scaleY() const;
 		DllExport float scaleZ() const;
@@ -70,7 +72,7 @@ class Entity3D{
 
 	protected:
 		float m_fPosX, m_fPosY, m_fPosZ;
-		float m_fRotationX, m_fRotationY, m_fRotationZ;
+		float m_fRotationX, m_fRotationY, m_fRotationZ, m_fRotationW;
 		float m_fScaleX, m_fScaleY, m_fScaleZ;
 		float m_fPreviousPosX, m_fPreviousPosY, m_fPreviousPosZ;
 		float baseScaleX, baseScaleY, baseScaleZ;

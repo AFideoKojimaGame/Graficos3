@@ -15,7 +15,7 @@ ImporterPG2::~ImporterPG2(){
 	m_Textures.clear();
 }
 
-bool ImporterPG2::importScene(const std::string& rkFilename, Node& orkSceneRoot, vector<BSPPlane*>& planevec, BSPTree& bsp){
+bool ImporterPG2::importScene(const std::string& rkFilename, Node& orkSceneRoot, BSPTree& bsp){
 	
 	Importer importer;
 	aiString* path = new aiString;
@@ -38,12 +38,12 @@ bool ImporterPG2::importScene(const std::string& rkFilename, Node& orkSceneRoot,
 	if (iRoot->mNumChildren <= 0 && iRoot->mNumMeshes <= 0)
 		return false;
 
-	importNode(iRoot, orkSceneRoot, scene, planevec, bsp);
+	importNode(iRoot, orkSceneRoot, scene, bsp);
 
 	return true;
 }
 
-void ImporterPG2::importNode(aiNode* child, Node& parent, const aiScene* scene, vector<BSPPlane*>& planevec, BSPTree& bsp){
+void ImporterPG2::importNode(aiNode* child, Node& parent, const aiScene* scene, BSPTree& bsp){
 	
 	aiVector3t<float> position;
 	aiQuaterniont<float> rotation;
@@ -77,13 +77,13 @@ void ImporterPG2::importNode(aiNode* child, Node& parent, const aiScene* scene, 
 		Node* newNode = new Node();
 
 		newNode->setPos(position.x, position.y, position.z);
-		//newNode->setRotation(rotation.x, rotation.y, rotation.z);
+		newNode->setRotationQuat(rotation.x, rotation.y, rotation.z, rotation.w);
 		newNode->setScale(scale.x, scale.y, scale.z);
 
 		newNode->setName(child->mName.C_Str());
 
 		for (unsigned int k = 0; k < child->mNumChildren; k++){
-			importNode(child->mChildren[k], *newNode, scene, planevec, bsp);
+			importNode(child->mChildren[k], *newNode, scene, bsp);
 		}
 
 		parent.addChild(newNode);
@@ -117,23 +117,6 @@ void ImporterPG2::importNode(aiNode* child, Node& parent, const aiScene* scene, 
 				newMesh->createBV(rootMesh->mVertices[i].x, rootMesh->mVertices[i].y, rootMesh->mVertices[i].z);
 			}
 		}
-
-		string debugName = child->mName.C_Str();
-		size_t findP = debugName.find("Plane");
-
-		if (findP != string::npos) {
-			BSPPlane* b = new BSPPlane();
-			D3DXVECTOR3 planeVerts[3];
-			for (unsigned int i = 0; i < 3; i++) {
-				planeVerts[i].x = rootMesh->mVertices[i].x;
-				planeVerts[i].y = rootMesh->mVertices[i].y;
-				planeVerts[i].z = rootMesh->mVertices[i].z;
-			}
-
-			b->SetPlane(planeVerts[0], planeVerts[1], planeVerts[2]);
-			bsp.AddChild(planeVerts[0], planeVerts[1], planeVerts[2]);
-			planevec.push_back(b);
-		}
 		
 		unsigned short* indices = new unsigned short[rootMesh->mNumFaces * 3];
 
@@ -162,7 +145,7 @@ void ImporterPG2::importNode(aiNode* child, Node& parent, const aiScene* scene, 
 		}
 
 		newMesh->setPos(position.x, position.y, position.z);
-		//newMesh->setRotation(rotation.x, rotation.y, rotation.z);
+		newMesh->setRotationQuat(rotation.x, rotation.y, rotation.z, rotation.w);
 		newMesh->setScale(scale.x, scale.y, scale.z);
 
 		//newMesh->importMatrix(expMat);
@@ -173,6 +156,34 @@ void ImporterPG2::importNode(aiNode* child, Node& parent, const aiScene* scene, 
 			indices, rootMesh->mNumFaces * 3);
 
 		parent.addChild(newMesh);
+
+		string debugName = child->mName.C_Str();
+		size_t findP = debugName.find("Plane");
+
+		if (findP != string::npos) {
+			D3DXVECTOR3 planeVerts[3];
+
+			D3DXVECTOR3 min = newMesh->getMin();
+			D3DXVECTOR3 max = newMesh->getMax();
+
+			planeVerts[0].x = min.x;
+			planeVerts[0].y = min.y;
+			planeVerts[0].z = min.z;
+			planeVerts[1].x = max.x;
+			planeVerts[1].y = min.y;
+			planeVerts[1].z = min.z;
+			planeVerts[2].x = max.x;
+			planeVerts[2].y = max.y;
+			planeVerts[2].z = min.z;
+
+			//for (unsigned int i = 0; i < 3; i++) {
+			//	planeVerts[i].x = rootMesh->mVertices[i].x;
+			//	planeVerts[i].y = rootMesh->mVertices[i].y;
+			//	planeVerts[i].z = rootMesh->mVertices[i].z;
+			//}
+
+			bsp.AddChild(planeVerts[0], planeVerts[1], planeVerts[2]);
+		}
 		
 		delete[] meshVertex;
 		meshVertex = NULL;

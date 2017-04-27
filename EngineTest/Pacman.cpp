@@ -5,7 +5,7 @@ bool Pacman::init(Renderer& rkRenderer){
 	imp = new ImporterPG2(rkRenderer);
 	root = new Node();
 
-	if (!imp->importScene("Assets/sample_scene.3ds", *root, planes, bsp))
+	if (!imp->importScene("Assets/isitworking.3ds", *root, bsp))
 		return false;
 
 	camSpeedDivider = 1000.0f;
@@ -26,9 +26,6 @@ void Pacman::frame(Renderer& pkRenderer, DirectInput& rkInput, Timer& rkTimer){
 
 	root->setPos(0, 0, 0);
 	root->updateBV();
-	//D3DXVECTOR3 cookie = root->getAABB().min;
-	//D3DXVECTOR3 cookie2 = root->getAABB().max;
-	//root->draw(*nameVector, *vertsNumber, *polyNumber);
 
 	root->draw(pkRenderer, 
 			   gameCamera->getFrustum().aabbInFrustum(root->getAABB()),
@@ -153,12 +150,4 @@ void Pacman::deinit(){
 
 	delete polyNumber;
 	polyNumber = NULL;
-
-	for (int i = 0; i < planes.size(); i++) {
-		delete planes[i];
-		planes[i] = NULL;
-	}
-
-	if (!planes.empty())
-		planes.clear();
 }

@@ -14,6 +14,7 @@ Entity3D::Entity3D(){
 	m_fRotationX = 0.0f;
 	m_fRotationY = 0.0f;
 	m_fRotationZ = 0.0f;
+	m_fRotationW = 0.0f;
 	m_fScaleX = 1.0f;
 	m_fScaleY = 1.0f;
 	m_fScaleZ = 1.0f;
@@ -76,6 +77,15 @@ void Entity3D::setRotation(float fRotationX, float fRotationY, float fRotationZ)
 	m_fRotationX = fRotationX;
 	m_fRotationY = fRotationY;
 	m_fRotationZ = fRotationZ;
+
+	updateWorldTransformation();
+}
+
+void Entity3D::setRotationQuat(float fRotationX, float fRotationY, float fRotationZ, float fRotationW) {
+	m_fRotationX = fRotationX;
+	m_fRotationY = fRotationY;
+	m_fRotationZ = fRotationZ;
+	m_fRotationW = fRotationW;
 
 	updateWorldTransformation();
 }
@@ -151,19 +161,24 @@ void Entity3D::updateTransformation(){
 	D3DXMATRIX traslatrionMat;
 	D3DXMatrixTranslation(&traslatrionMat, m_fPosX, m_fPosY, m_fPosZ);
 
-	D3DXMATRIX rotationMatX, rotationMatY, rotationMatZ;
+	/*D3DXMATRIX rotationMatX, rotationMatY, rotationMatZ;
 	D3DXMatrixRotationX(&rotationMatX, m_fRotationX);
 	D3DXMatrixRotationY(&rotationMatY, m_fRotationY);
-	D3DXMatrixRotationZ(&rotationMatZ, m_fRotationZ);
+	D3DXMatrixRotationZ(&rotationMatZ, m_fRotationZ);*/
+
+	D3DXMATRIX rotationMat;
+	D3DXQUATERNION rotationQuat = D3DXQUATERNION(m_fRotationX, m_fRotationY, m_fRotationZ, m_fRotationW);
+	D3DXMatrixRotationQuaternion(&rotationMat, &rotationQuat);
 
 	D3DXMATRIX scaleMat;
 	D3DXMatrixScaling(&scaleMat, m_fScaleX, m_fScaleY, m_fScaleZ);
 
 	D3DXMatrixIdentity(m_pkTransformationMatrix);
 	D3DXMatrixMultiply(m_pkTransformationMatrix, &traslatrionMat, m_pkTransformationMatrix);
-	D3DXMatrixMultiply(m_pkTransformationMatrix, &rotationMatX, m_pkTransformationMatrix);
+	/*D3DXMatrixMultiply(m_pkTransformationMatrix, &rotationMatX, m_pkTransformationMatrix);
 	D3DXMatrixMultiply(m_pkTransformationMatrix, &rotationMatY, m_pkTransformationMatrix);
-	D3DXMatrixMultiply(m_pkTransformationMatrix, &rotationMatZ, m_pkTransformationMatrix);
+	D3DXMatrixMultiply(m_pkTransformationMatrix, &rotationMatZ, m_pkTransformationMatrix);*/
+	D3DXMatrixMultiply(m_pkTransformationMatrix, &rotationMat, m_pkTransformationMatrix);
 	D3DXMatrixMultiply(m_pkTransformationMatrix, &scaleMat, m_pkTransformationMatrix);
 }
 

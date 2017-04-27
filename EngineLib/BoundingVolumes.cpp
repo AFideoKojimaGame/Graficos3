@@ -209,7 +209,7 @@ void BSPTree::AddChild(D3DXVECTOR3 v1, D3DXVECTOR3 v2, D3DXVECTOR3 v3) {
 bool BSPTree::CheckTree(D3DXVECTOR3 camPos, D3DXVECTOR3 objPos) {
 	float camCheck, objCheck = 0;
 	bool canDraw = true;
-	for (int i = 0; i < planes.size(); i++) {
+	for (int i = planes.size() - 1; i >= 0; i--) {
 		if(canDraw){
 			camCheck = planes[i]->Check(camPos);
 			objCheck = planes[i]->Check(objPos);

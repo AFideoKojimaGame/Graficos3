@@ -69,14 +69,15 @@ void Mesh::draw(vector<string>& vec, int& vNum, int& pNum){
 
 void Mesh::draw(Renderer& rkRenderer, CollisionResult eParentResult, const Frustum& rkFrustum, vector<string>& vec, int& vNum, int& pNum, D3DXVECTOR3 camPos, BSPTree& bsp){
 	
-	D3DXVECTOR3 myPos;
-	myPos.x = m_fPosX;
-	myPos.y = m_fPosY;
-	myPos.z = m_fPosZ;
-	canDraw = bsp.CheckTree(camPos, myPos);
+	name;
+	canDraw = bsp.CheckTree(camPos, (D3DXVECTOR3(m_fPosX, m_fPosY, m_fPosZ)));
+
+	//canDraw = bsp.CheckTree(camPos, (D3DXVECTOR3(m_fPosX * parent->WorldScaleX() + parent->WorldPosX(),
+	//	m_fPosY * parent->WorldScaleY() + parent->WorldPosY(),
+	//	m_fPosZ * parent->WorldScaleZ() + parent->WorldPosZ())));
 
 	//check = bsp.Check(D3DXVECTOR3(m_fPosX, m_fPosY, m_fPosZ));
-	name;
+
 	int otherInt = 0;
 
 	//bool canDraw = false;
@@ -146,13 +147,26 @@ void Mesh::updateBV(){
 
 	//Punto base minimo/maximo de la AABB * la escala en World del Mesh + la posicion en World del Mesh
 
-	float minX = aabb.basemin.x * m_fScaleX * parent->WorldScaleX() + m_fPosX * parent->WorldScaleX() + parent->WorldPosX();
-	float minY = aabb.basemin.y * m_fScaleY * parent->WorldScaleY() + m_fPosY * parent->WorldScaleY() + parent->WorldPosY();
-	float minZ = aabb.basemin.z * m_fScaleZ * parent->WorldScaleZ() + m_fPosZ * parent->WorldScaleZ() + parent->WorldPosZ();
+	float minX, minY, minZ, maxX, maxY, maxZ;
 
-	float maxX = aabb.basemax.x * m_fScaleX * parent->WorldScaleX() + m_fPosX * parent->WorldScaleX() + parent->WorldPosX();
-	float maxY = aabb.basemax.y * m_fScaleY * parent->WorldScaleY() + m_fPosY * parent->WorldScaleY() + parent->WorldPosY();
-	float maxZ = aabb.basemax.z * m_fScaleZ * parent->WorldScaleZ() + m_fPosZ * parent->WorldScaleZ() + parent->WorldPosZ();
+	if (parent) {
+		minX = aabb.basemin.x * m_fScaleX * parent->WorldScaleX() + m_fPosX * parent->WorldScaleX() + parent->WorldPosX();
+		minY = aabb.basemin.y * m_fScaleY * parent->WorldScaleY() + m_fPosY * parent->WorldScaleY() + parent->WorldPosY();
+		minZ = aabb.basemin.z * m_fScaleZ * parent->WorldScaleZ() + m_fPosZ * parent->WorldScaleZ() + parent->WorldPosZ();
+
+		maxX = aabb.basemax.x * m_fScaleX * parent->WorldScaleX() + m_fPosX * parent->WorldScaleX() + parent->WorldPosX();
+		maxY = aabb.basemax.y * m_fScaleY * parent->WorldScaleY() + m_fPosY * parent->WorldScaleY() + parent->WorldPosY();
+		maxZ = aabb.basemax.z * m_fScaleZ * parent->WorldScaleZ() + m_fPosZ * parent->WorldScaleZ() + parent->WorldPosZ();
+	}else {
+		minX = aabb.basemin.x * m_fScaleX + m_fPosX;
+		minY = aabb.basemin.y * m_fScaleY + m_fPosY;
+		minZ = aabb.basemin.z * m_fScaleZ + m_fPosZ;
+
+		maxX = aabb.basemax.x * m_fScaleX + m_fPosX;
+		maxY = aabb.basemax.y * m_fScaleY + m_fPosY;
+		maxZ = aabb.basemax.z * m_fScaleZ + m_fPosZ;
+	}
+	
 	
 	name; //Pa' testear
 

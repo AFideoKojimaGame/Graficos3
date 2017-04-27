@@ -49,7 +49,6 @@ class Pacman : public Game{
 		int* vertsNumber = new int();
 		int* polyNumber = new int();
 		BSPTree bsp;
-		vector<BSPPlane*> planes;
 };
 
 #endif
