@@ -46,31 +46,38 @@ void Mesh::setMeshData(const TexVertex* pakVertices, D3DPRIMITIVETYPE ePrimitive
 	meshPrimitive = ePrimitive;
 }
 
-void Mesh::draw(vector<string>& vec, int& vNum, int& pNum){
+void Mesh::draw(vector<string>& vec, int& vNum, int& pNum, D3DXVECTOR3 camPos, BSPTree& bsp){
+
+	name;
+	canDraw = bsp.CheckTree(camPos, aabb.min, aabb.max);
 
 	int otherInt = 0;
 
-	string push;
-	push = name + " " + " - Vertices: " + to_string(vertsSize / 3);
+	if (canDraw) {
+		string push;
+		push = name + " " + " - Vertices: " + to_string(vertsSize / 3);
 
-	vNum += vertsSize / 3;
+		vNum += vertsSize / 3;
 
-	meshIB->bind();
-	meshVB->bind();
+		meshIB->bind();
+		meshVB->bind();
 
-	meshRenderer->setCurrentTexture(text);
+		meshRenderer->setCurrentTexture(text);
 
-	meshRenderer->setMatrix(m_pkWorldMatrix); 
-	meshRenderer->drawCurrentBuffers(meshPrimitive, pNum, otherInt);
+		meshRenderer->setMatrix(m_pkWorldMatrix);
+		meshRenderer->drawCurrentBuffers(meshPrimitive, pNum, otherInt);
 
-	push += " - Polygons: " + to_string(otherInt) + "\n ";
-	vec.push_back(push);
+		push += " - Polygons: " + to_string(otherInt) + "\n ";
+		vec.push_back(push);
+	}
+
+	canDraw = true;
 }
 
 void Mesh::draw(Renderer& rkRenderer, CollisionResult eParentResult, const Frustum& rkFrustum, vector<string>& vec, int& vNum, int& pNum, D3DXVECTOR3 camPos, BSPTree& bsp){
 	
 	name;
-	canDraw = bsp.CheckTree(camPos, (D3DXVECTOR3(m_fPosX, m_fPosY, m_fPosZ)));
+	canDraw = bsp.CheckTree(camPos, aabb.min, aabb.max);
 
 	//canDraw = bsp.CheckTree(camPos, (D3DXVECTOR3(m_fPosX * parent->WorldScaleX() + parent->WorldPosX(),
 	//	m_fPosY * parent->WorldScaleY() + parent->WorldPosY(),

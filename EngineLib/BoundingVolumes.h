@@ -54,7 +54,7 @@ struct BSPTree {
 		DllExport BSPTree();
 		DllExport ~BSPTree();
 		DllExport void AddChild(D3DXVECTOR3 v1, D3DXVECTOR3 v2, D3DXVECTOR3 v3);
-		DllExport bool CheckTree(D3DXVECTOR3 camPos, D3DXVECTOR3 objPos);
+		DllExport bool CheckTree(D3DXVECTOR3 camPos, D3DXVECTOR3 objMin, D3DXVECTOR3 objMax);
 	private:
 		vector<BSPPlane*> planes;
 };

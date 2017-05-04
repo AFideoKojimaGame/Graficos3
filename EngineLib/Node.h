@@ -20,7 +20,7 @@ class Node : public Entity3D{
 		DllExport Entity3D* getChildMesh(string name);
 
 		DllExport void updateWorldTransformation();
-		DllExport void draw(vector<string>& vec, int& vNum, int& pNum);
+		DllExport void draw(vector<string>& vec, int& vNum, int& pNum, D3DXVECTOR3 camPos, BSPTree& bsp);
 		DllExport void draw(Renderer& rkRenderer, CollisionResult eParentResult, const Frustum& rkFrustum, vector<string>& vec, int& vNum, int& pNum, D3DXVECTOR3 camPos, BSPTree& bsp);
 
 		DllExport void updateBV();

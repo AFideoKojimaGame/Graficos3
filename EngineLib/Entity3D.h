@@ -52,7 +52,7 @@ class Entity3D{
 		DllExport float previousPosZ() const;
 		DllExport void returnToPos(float fPosX, float fPosY, float fPosZ);
 
-		DllExport virtual void draw(vector<string>& vec, int& vNum, int& pNum) = 0;
+		DllExport virtual void draw(vector<string>& vec, int& vNum, int& pNum, D3DXVECTOR3 camPos, BSPTree& bsp) = 0;
 		DllExport virtual void draw(Renderer& rkRenderer, CollisionResult eParentResult, 
 									const Frustum& rkFrustum, vector<string>& vec, int& vNum, int& pNum, D3DXVECTOR3 camPos, BSPTree& bsp) = 0;
 

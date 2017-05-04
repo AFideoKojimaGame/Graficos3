@@ -206,17 +206,20 @@ void BSPTree::AddChild(D3DXVECTOR3 v1, D3DXVECTOR3 v2, D3DXVECTOR3 v3) {
 	bsp->SetPlane(v1, v2, v3);
 	planes.push_back(bsp);
 }
-bool BSPTree::CheckTree(D3DXVECTOR3 camPos, D3DXVECTOR3 objPos) {
-	float camCheck, objCheck = 0;
+bool BSPTree::CheckTree(D3DXVECTOR3 camPos, D3DXVECTOR3 objMin, D3DXVECTOR3 objMax) {
+	float camCheck, minCheck, maxCheck = 0;
 	bool canDraw = true;
 	for (int i = planes.size() - 1; i >= 0; i--) {
 		if(canDraw){
 			camCheck = planes[i]->Check(camPos);
-			objCheck = planes[i]->Check(objPos);
-			if ((objCheck > 0 && camCheck > 0) || (objCheck < 0 && camCheck < 0) || (camCheck == 0))
+			minCheck = planes[i]->Check(objMin);
+			maxCheck = planes[i]->Check(objMax);
+			if (((minCheck > 0 || maxCheck > 0) && camCheck > 0) || ((minCheck < 0 || maxCheck < 0) && camCheck < 0) || (camCheck == 0) || (minCheck == 0 || maxCheck == 0))
 				canDraw = true;
-			else
+			else{
 				canDraw = false;
+				break;
+			}
 		}
 	}
 

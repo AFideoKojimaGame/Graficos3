@@ -77,7 +77,7 @@ void ImporterPG2::importNode(aiNode* child, Node& parent, const aiScene* scene, 
 		Node* newNode = new Node();
 
 		newNode->setPos(position.x, position.y, position.z);
-		newNode->setRotationQuat(rotation.x, rotation.y, rotation.z, rotation.w);
+		//newNode->setRotationQuat(rotation.x, rotation.y, rotation.z, rotation.w);
 		newNode->setScale(scale.x, scale.y, scale.z);
 
 		newNode->setName(child->mName.C_Str());
@@ -145,7 +145,7 @@ void ImporterPG2::importNode(aiNode* child, Node& parent, const aiScene* scene, 
 		}
 
 		newMesh->setPos(position.x, position.y, position.z);
-		newMesh->setRotationQuat(rotation.x, rotation.y, rotation.z, rotation.w);
+		//newMesh->setRotationQuat(rotation.x, rotation.y, rotation.z, rotation.w);
 		newMesh->setScale(scale.x, scale.y, scale.z);
 
 		//newMesh->importMatrix(expMat);
@@ -161,28 +161,32 @@ void ImporterPG2::importNode(aiNode* child, Node& parent, const aiScene* scene, 
 		size_t findP = debugName.find("Plane");
 
 		if (findP != string::npos) {
+
 			D3DXVECTOR3 planeVerts[3];
 
-			D3DXVECTOR3 min = newMesh->getMin();
-			D3DXVECTOR3 max = newMesh->getMax();
+			if (rootMesh->mNumVertices < 5) {				
 
-			planeVerts[0].x = min.x;
-			planeVerts[0].y = min.y;
-			planeVerts[0].z = min.z;
-			planeVerts[1].x = max.x;
-			planeVerts[1].y = min.y;
-			planeVerts[1].z = min.z;
-			planeVerts[2].x = max.x;
-			planeVerts[2].y = max.y;
-			planeVerts[2].z = min.z;
+				for (unsigned int i = 0; i < 3; i++) {
+					planeVerts[i].x = rootMesh->mVertices[i].x + newMesh->posX();
+					planeVerts[i].y = rootMesh->mVertices[i].y + newMesh->posY();
+					planeVerts[i].z = rootMesh->mVertices[i].z + newMesh->posZ();
+				}
 
-			//for (unsigned int i = 0; i < 3; i++) {
-			//	planeVerts[i].x = rootMesh->mVertices[i].x;
-			//	planeVerts[i].y = rootMesh->mVertices[i].y;
-			//	planeVerts[i].z = rootMesh->mVertices[i].z;
-			//}
+				bsp.AddChild(planeVerts[0], planeVerts[1], planeVerts[2]);
+			}else {
+				D3DXVECTOR3 min = newMesh->getMin();
+				D3DXVECTOR3 max = newMesh->getMax();
 
-			bsp.AddChild(planeVerts[0], planeVerts[1], planeVerts[2]);
+				planeVerts[0].x = min.x;
+				planeVerts[0].y = min.y;
+				planeVerts[0].z = min.z;
+				planeVerts[1].x = max.x;
+				planeVerts[1].y = min.y;
+				planeVerts[1].z = min.z;
+				planeVerts[2].x = max.x;
+				planeVerts[2].y = max.y;
+				planeVerts[2].z = min.z;
+			}			
 		}
 		
 		delete[] meshVertex;

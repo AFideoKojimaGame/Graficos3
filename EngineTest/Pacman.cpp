@@ -5,14 +5,15 @@ bool Pacman::init(Renderer& rkRenderer){
 	imp = new ImporterPG2(rkRenderer);
 	root = new Node();
 
-	if (!imp->importScene("Assets/isitworking.3ds", *root, bsp))
+	if (!imp->importScene("Assets/elmenemovil.3ds", *root, bsp))
 		return false;
 
 	camSpeedDivider = 1000.0f;
 	gameCamera = new Camera(rkRenderer);
 	rkRenderer.setMatrix(D3DTS_VIEW, gameCamera->viewMatrix());
 
-	gameCamera->setPos(0.0f, 0.0f, -20.0f);
+	gameCamera->setPos(0.0f, 0.0f, -200.0f);
+
 	return true;
 }
 
@@ -27,16 +28,23 @@ void Pacman::frame(Renderer& pkRenderer, DirectInput& rkInput, Timer& rkTimer){
 	root->setPos(0, 0, 0);
 	root->updateBV();
 
-	root->draw(pkRenderer, 
-			   gameCamera->getFrustum().aabbInFrustum(root->getAABB()),
-		       gameCamera->getFrustum(),
-			   *nameVector,
-			   *vertsNumber,
-		       *polyNumber,
-		gameCamera->getPos(),
-			   bsp);
+	//root->draw(pkRenderer, 
+	//		   gameCamera->getFrustum().aabbInFrustum(root->getAABB()),
+	//	       gameCamera->getFrustum(),
+	//		   *nameVector,
+	//		   *vertsNumber,
+	//	       *polyNumber,
+	//	gameCamera->getPos(),
+	//		   bsp);
 
-	if (rkInput.keyDown(Input::KEY_F)){
+	root->draw(
+		*nameVector,
+		*vertsNumber,
+		*polyNumber,
+		gameCamera->getPos(),
+		bsp);
+
+	/*if (rkInput.keyDown(Input::KEY_F)){
 		gameCamera->strafe(-fSpeed);;
 	}
 
@@ -50,7 +58,7 @@ void Pacman::frame(Renderer& pkRenderer, DirectInput& rkInput, Timer& rkTimer){
 
 	if (rkInput.keyDown(Input::KEY_H)){
 		gameCamera->strafe(fSpeed);
-	}
+	}*/
 
 	if (rkInput.keyDown(Input::KEY_LCONTROL)){
 		gameCamera->fly(-fSpeed);
@@ -68,63 +76,65 @@ void Pacman::frame(Renderer& pkRenderer, DirectInput& rkInput, Timer& rkTimer){
 		root->getChildNode("group1")->ScaleAll(0.05f, 0.05f, 0.05f);
 	}
 
-	if (rkInput.keyDown(Input::KEY_Z)){
-		root->ScaleAll(-0.05f, -0.05f, -0.05f);
-	}
-
-	if (rkInput.keyDown(Input::KEY_X)){
-		root->ScaleAll(0.05f, 0.05f, 0.05f);
-	}
-
 	if (!isColliding){
 
 		pkRenderer.drawText(showMe);
 		showMe = "";
 		if (rkInput.keyDown(Input::KEY_DOWN)){
 
-			/*gameCamera->fly(-fSpeed);*/
-			root->getChildNode("group1")->getChildMesh("Teapot001")->ScaleY(-1.00f);
+			gameCamera->walk(-fSpeed);
+			//root->getChildNode("group1")->getChildMesh("Teapot001")->ScaleY(-1.00f);
 		}
 
 		if (rkInput.keyDown(Input::KEY_UP)){
 
-			/*gameCamera->fly(fSpeed);*/
+			gameCamera->walk(fSpeed);
 
-			root->getChildNode("group1")->getChildMesh("Teapot001")->ScaleY(1.00f);
+			//root->getChildNode("group1")->getChildMesh("Teapot001")->ScaleY(1.00f);
 		}
 
 		if (rkInput.keyDown(Input::KEY_RIGHT)){
 
-			/*gameCamera->strafe(fSpeed);*/
+			gameCamera->strafe(fSpeed);
 
-			root->getChildNode("group1")->getChildMesh("Teapot001")->MoveX(1.00f);
+			//root->getChildNode("group1")->getChildMesh("Teapot001")->MoveX(1.00f);
 		}
 
 		if (rkInput.keyDown(Input::KEY_LEFT)){
 
-			/*gameCamera->strafe(-fSpeed);*/
+			gameCamera->strafe(-fSpeed);
 
-			root->getChildNode("group1")->getChildMesh("Teapot001")->MoveX(-1.00f);
+			//root->getChildNode("<3DSRoot>")->getChildMesh("Teapot001")->MoveX(-1.00f);
 		}
 
 		if (rkInput.keyDown(Input::KEY_W)){
 			//gameCamera->walk(fSpeed);
-			root->getChildNode("group1")->MoveY(1.00f);
+			root->getChildNode("<3DSRoot>")->getChildMesh("Control")->MoveY(1.00f);
 		}
 
 		if (rkInput.keyDown(Input::KEY_S)){
 			//gameCamera->walk(-fSpeed);
-			root->getChildNode("group1")->MoveY(-1.00f);
+			root->getChildNode("<3DSRoot>")->getChildMesh("Control")->MoveY(-1.00f);
 		}
 
 		if (rkInput.keyDown(Input::KEY_D)){
 			//gameCamera->strafe(fSpeed);
-			root->getChildNode("group1")->MoveX(1.00f);
+			root->getChildNode("<3DSRoot>")->getChildMesh("Control")->MoveX(1.00f);
 		}
 
 		if (rkInput.keyDown(Input::KEY_A)){
 			//gameCamera->strafe(-fSpeed);
-			root->getChildNode("group1")->MoveX(-1.00f);
+			root->getChildNode("<3DSRoot>")->getChildMesh("Control")->MoveX(-1.00f);
+		}
+
+		if (rkInput.keyDown(Input::KEY_Z)) {
+			//gameCamera->walk(fSpeed);
+			(root->getChildNode("<3DSRoot>")->getChildMesh("Control"))->MoveZ(1.00f);
+		}
+
+		if (rkInput.keyDown(Input::KEY_X)) {
+			//gameCamera->walk(-fSpeed);
+			(root->getChildNode("<3DSRoot>")->getChildMesh("Control"))->MoveZ(-1.00f);
 		}
 
 		if (rkInput.keyDown(Input::KEY_Q)){
